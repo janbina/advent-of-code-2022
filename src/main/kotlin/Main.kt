@@ -9,7 +9,7 @@ fun main() {
     }.also {
         println("Time taken: $it")
     }
-//    testAll()
+    testAll()
 }
 
 private fun runDay(
@@ -28,11 +28,11 @@ private fun runDay(
 private fun testAll() {
     Day01(getDayInputFile(1)!!.bufferedReader()).run {
         require(solvePart1() == 70374)
-        require(solvePart2() == 1362)
+        require(solvePart2() == 204610)
     }
     Day02(getDayInputFile(2)!!.bufferedReader()).run {
-        require(solvePart1() == 70374)
-        require(solvePart2() == 1362)
+        require(solvePart1() == 11603)
+        require(solvePart2() == 12725)
     }
 }
 
