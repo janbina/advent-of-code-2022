@@ -196,3 +196,7 @@ fun <T> Array<T>.setCyclic(index: Int, value: T) {
 fun <T> Array<Array<T>>.setCyclic(row: Int, col: Int, value: T) {
     getCyclic(row).setCyclic(col, value)
 }
+
+fun String.splitOnWhitespace(): List<String> {
+    return this.split("\\s+".toPattern())
+}
