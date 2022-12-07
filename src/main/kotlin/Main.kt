@@ -50,6 +50,10 @@ private fun testAll() {
         require(solvePart1() == 1623)
         require(solvePart2() == 3774)
     }
+    Day07(getDayInputFile(7)!!.bufferedReader()).run {
+        require(solvePart1() == 1390824)
+        require(solvePart2() == 7490863)
+    }
 }
 
 private fun getDayInputFile(day: Int): File? {
