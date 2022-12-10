@@ -5,7 +5,7 @@ import kotlin.system.measureTimeMillis
 
 fun main() {
     measureTimeMillis {
-        runDay(9)
+        runDay(10)
     }.also {
         println("Time taken: $it")
     }
@@ -62,6 +62,10 @@ private fun testAll() {
         require(solvePart1() == 6181)
         require(solvePart2() == 2386)
     }
+    Day10(getDayInputFile(10)!!.bufferedReader()).run {
+        require(solvePart1() == 14920)
+        require(solvePart2() == 0)
+    }
 }
 
 private fun getDayInputFile(day: Int): File? {
@@ -81,6 +85,7 @@ private fun createDay(day: Int, input: BufferedReader): Day<*, *> {
         7 -> Day07(input)
         8 -> Day08(input)
         9 -> Day09(input)
+        10 -> Day10(input)
         else -> error("Day $day not yet implemented")
     }
 }
