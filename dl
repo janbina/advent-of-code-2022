@@ -1,0 +1,15 @@
+#!/bin/bash
+
+create_file() {
+  padded_number=$(printf "%02d" $1)
+  ./aocdl -day $1 -output "src/main/resources/day$padded_number.txt"
+}
+
+# Check if an argument was provided
+if [ $# -eq 0 ]; then
+  for i in {1..24}; do
+    create_file $i
+  done
+else
+  create_file $1
+fi
