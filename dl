@@ -1,13 +1,17 @@
 #!/bin/bash
 
+DIR="src/main/resources"
+
 create_file() {
   padded_number=$(printf "%02d" $1)
-  ./aocdl -day $1 -output "src/main/resources/day$padded_number.txt"
+  ./aocdl -day $1 -output "$DIR/day$padded_number.txt"
 }
+
+mkdir -p $DIR
 
 # Check if an argument was provided
 if [ $# -eq 0 ]; then
-  for i in {1..24}; do
+  for i in {1..25}; do
     create_file $i
   done
 else
