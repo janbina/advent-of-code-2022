@@ -2,7 +2,7 @@ package utils
 
 fun <T> List<T>.uniquePairs(): Sequence<Pair<T, T>> = sequence {
     for (i in 0..lastIndex) {
-        for (j in i+1..lastIndex) {
+        for (j in i + 1..lastIndex) {
             yield(get(i) to get(j))
         }
     }
@@ -20,8 +20,8 @@ fun <T> List<T>.pairs(): Sequence<Pair<T, T>> = sequence {
 
 fun <T> List<T>.uniqueTriples(): Sequence<Triple<T, T, T>> = sequence {
     for (i in 0..lastIndex) {
-        for (j in i+1..lastIndex) {
-            for (k in j+1..lastIndex) {
+        for (j in i + 1..lastIndex) {
+            for (k in j + 1..lastIndex) {
                 yield(Triple(get(i), get(j), get(k)))
             }
         }
@@ -97,6 +97,15 @@ fun <T> Array<Array<T>>.set(i: Int, j: Int, value: T): Boolean {
         return true
     }
     return false
+}
+
+fun <T> Array<Array<T>>.positionOfFirst(predicate: (T) -> Boolean): Point2D? {
+    forEachIndexed { y, arr ->
+        arr.forEachIndexed { x, t ->
+            if (predicate(t)) return Point2D(x, y)
+        }
+    }
+    return null
 }
 
 operator fun <T> Array<Array<T>>.set(p: Point2D, value: T): Boolean {

@@ -4,7 +4,7 @@ import java.util.*
 
 fun <Node> aStarSearch(
     start: Node,
-    end: Node,
+    isEnd: (Node) -> Boolean,
     next: (Node) -> Iterable<Pair<Node, Int>>,
     heuristicCostToEnd: (Node) -> Int,
 ): AStarResult<Node>? {
@@ -18,10 +18,10 @@ fun <Node> aStarSearch(
 
     while (openVertices.isNotEmpty()) {
         val current = openVertices.poll()
-        if (current == end) {
+        if (isEnd(current)) {
             return AStarResult(
                 path = generatePath(current, cameFrom),
-                cost = costFromStart[end]!!
+                cost = costFromStart[current]!!
             )
         }
         next(current)
