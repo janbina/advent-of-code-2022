@@ -1,11 +1,12 @@
 import solutions.*
 import java.io.BufferedReader
 import java.io.File
+import java.net.URL
 import kotlin.system.measureTimeMillis
 
 fun main() {
     measureTimeMillis {
-        runDay(13)
+        runDay(14)
     }.also {
         println("Time taken: $it")
     }
@@ -23,6 +24,46 @@ private fun runDay(
     println("Solving Day $dayNumber")
     println("\tPart 1 = ${day.solvePart1()}")
     println("\tPart 2 = ${day.solvePart2()}")
+}
+
+private fun getDayInputFile(day: Int, forceDownload: Boolean = false): File? {
+    println("Get file for day $day, force download $forceDownload")
+
+    File("input").mkdirs()
+    val file = File("input/day${day.toString().padStart(2, '0')}.txt")
+
+    if (file.exists() && !forceDownload) {
+        println("Got file from cache")
+        return file
+    }
+
+    val session = runCatching { File(".session").readText().trim() }.getOrElse { "" }
+    if (session.isBlank()) {
+        println("Missing session cookie")
+        return null
+    }
+
+    println("Downloading input file for day $day")
+
+    val url = URL("https://adventofcode.com/2022/day/$day/input")
+    val connection = url.openConnection().apply {
+        setRequestProperty("User-Agent", "github.com/janbina")
+        setRequestProperty("Cookie", "session=$session")
+    }
+
+    return runCatching {
+        connection.inputStream
+    }.fold(
+        onSuccess = { input ->
+            file.outputStream().use { fos -> input.copyTo(fos) }
+            println("Input file for day $day downloaded")
+            file
+        },
+        onFailure = {
+            println("Error downloading file for day $day")
+            null
+        }
+    )
 }
 
 private fun testAll() {
@@ -78,12 +119,10 @@ private fun testAll() {
         require(solvePart1() == 5393)
         require(solvePart2() == 26712)
     }
-}
-
-private fun getDayInputFile(day: Int): File? {
-    val fileName = "day${day.toString().padStart(2, '0')}.txt"
-    val fileUri = Day::class.java.classLoader.getResource(fileName)?.toURI() ?: return null
-    return File(fileUri)
+    Day14(getDayInputFile(14)!!.bufferedReader()).run {
+        require(solvePart1() == 0)
+        require(solvePart2() == 0)
+    }
 }
 
 private fun createDay(day: Int, input: BufferedReader): Day<*, *> {
@@ -101,6 +140,7 @@ private fun createDay(day: Int, input: BufferedReader): Day<*, *> {
         11 -> Day11(input)
         12 -> Day12(input)
         13 -> Day13(input)
+        14 -> Day14(input)
         else -> error("Day $day not yet implemented")
     }
 }
