@@ -27,13 +27,10 @@ private fun runDay(
 }
 
 private fun getDayInputFile(day: Int, forceDownload: Boolean = false): File? {
-    println("Get file for day $day, force download $forceDownload")
-
     File("input").mkdirs()
     val file = File("input/day${day.toString().padStart(2, '0')}.txt")
 
     if (file.exists() && !forceDownload) {
-        println("Got file from cache")
         return file
     }
 
@@ -120,8 +117,8 @@ private fun testAll() {
         require(solvePart2() == 26712)
     }
     Day14(getDayInputFile(14)!!.bufferedReader()).run {
-        require(solvePart1() == 0)
-        require(solvePart2() == 0)
+        require(solvePart1() == 610)
+//        require(solvePart2() == 27194)
     }
 }
 
