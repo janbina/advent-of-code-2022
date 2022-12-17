@@ -206,6 +206,16 @@ fun <T> Array<Array<T>>.setCyclic(row: Int, col: Int, value: T) {
     getCyclic(row).setCyclic(col, value)
 }
 
+fun <T> Array<Array<T>>.forEachIndexed(
+    action: (x: Int, y: Int, item: T) -> Unit,
+) {
+    forEachIndexed { y, items ->
+        items.forEachIndexed { x, item ->
+            action(x, y, item)
+        }
+    }
+}
+
 fun String.splitOnWhitespace(): List<String> {
     return this.split("\\s+".toPattern())
 }
