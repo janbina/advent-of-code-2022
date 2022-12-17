@@ -32,31 +32,33 @@ class Day17(
         generateSequence(0) { it + 1 }.map { rocks[it % rocks.size] }
 
     private class Chamber(
-        height: Int,
         width: Int,
         jetStream: Sequence<Char>,
     ) {
-        private val arr = Array(height) { Array(width) { '.' } }
+        private val arr = CyclicArray(width, 10_000).also {
+            it.clearRow(0, '#')
+        }
         private val jetStream = jetStream.iterator()
 
         // y coord of highest rock in the chamber, starting with floor
-        private var highestY = arr.size
+        private var height: Long = 0
 
-        val height: Int get() = arr.size - highestY
+        fun getHeight(): Long {
+            return -height
+        }
 
         fun placeRock(rock: Rock) {
             var x = 2 // rock starts 2 units from left side
-            var y = highestY - 4 // bottom edge 3 units above
+            var y = height - 4 // bottom edge 3 units above
 
             fun collides(): Boolean {
                 if (x < 0) return true
                 if (x + rock.width > 7) return true
-                if (y >= arr.size) return true
                 var flag = false
                 rock.forEachIndexed { px, py, c ->
                     if (
                         c == '#' &&
-                        arr[y - rock.size + 1 + py][x + px] == '#'
+                        arr.get(y - rock.size + 1 + py, x + px) == '#'
                     ) {
                         flag = true
                         return@forEachIndexed
@@ -66,10 +68,10 @@ class Day17(
             }
 
             fun place() {
-                highestY = minOf(highestY, y - rock.size + 1)
+                height = minOf(height, y - rock.size + 1)
                 rock.forEachIndexed { px, py, c ->
                     if (c == '#') {
-                        arr[y - rock.size + 1 + py][x + px] = '#'
+                        arr.set(y - rock.size + 1 + py, x + px, '#')
                     }
                 }
             }
@@ -105,17 +107,43 @@ class Day17(
 
     override fun solvePart1(): Int {
         val chamber = Chamber(
-            height = 2022 * 4 + 100,
             width = 7,
             jetStream = jetSequence(),
         )
 
         rockSequence().take(2022).forEach(chamber::placeRock)
 
-        return chamber.height
+        return chamber.getHeight().toInt()
     }
 
     override fun solvePart2(): Int {
         return 0
+    }
+}
+
+private class CyclicArray(
+    width: Int,
+    private val height: Int,
+) {
+    private val arr = Array(height) { Array(width) { ' ' } }
+
+    private fun Long.toIndex(): Int {
+        return (this % arr.size).let {
+            if (it < 0) it + height else it
+        }.toInt()
+    }
+
+    fun get(y: Long, x: Int): Char {
+        return arr[y.toIndex()][x]
+    }
+
+    fun set(y: Long, x: Int, c: Char) {
+        arr[y.toIndex()][x] = c
+    }
+
+    fun clearRow(y: Long, c: Char = ' ') {
+        for (x in arr.first().indices) {
+            set(y, x, c)
+        }
     }
 }
