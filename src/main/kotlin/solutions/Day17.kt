@@ -4,17 +4,15 @@ import utils.forEachIndexed
 import java.io.BufferedReader
 
 private typealias Rock = Array<Array<Char>>
+
 private val Rock.width: Int get() = first().size
 private val Rock.height: Int get() = size
 
 class Day17(
     inputReader: BufferedReader,
-) : Day<Int, Int>() {
+) : Day<Int, Long>() {
 
     private val jetPattern = inputReader.transformLines { it }.first().toList()
-
-    private fun jetSequence(): Sequence<Char> =
-        generateSequence(0) { it + 1 }.map { jetPattern[it % jetPattern.size] }
 
     private fun String.toRock(): Rock {
         return split('|').map { it.toCharArray().toTypedArray() }.toTypedArray()
@@ -32,13 +30,19 @@ class Day17(
         generateSequence(0) { it + 1 }.map { rocks[it % rocks.size] }
 
     private class Chamber(
-        width: Int,
-        jetStream: Sequence<Char>,
+        private val jetPattern: List<Char>,
     ) {
-        private val arr = CyclicArray(width, 10_000).also {
+        private val arr = CyclicArray(7, 1000).also {
             it.clearRow(0, '#')
         }
-        private val jetStream = jetStream.iterator()
+
+        private var jetIndex = 0
+
+        private fun getJetDirection(): Char {
+            return jetPattern[jetIndex].also {
+                jetIndex = (jetIndex + 1) % jetPattern.size
+            }
+        }
 
         // y coord of highest rock in the chamber, starting with floor
         private var height: Long = 0
@@ -50,6 +54,9 @@ class Day17(
         fun placeRock(rock: Rock) {
             var x = 2 // rock starts 2 units from left side
             var y = height - 4 // bottom edge 3 units above
+            for (py in height - 1 downTo height - 10 - rock.size) {
+                arr.clearRow(py)
+            }
 
             fun collides(): Boolean {
                 if (x < 0) return true
@@ -77,7 +84,7 @@ class Day17(
             }
 
             fun maybeMoveX() {
-                val movement = jetStream.next()
+                val movement = getJetDirection()
                 if (movement == '<') {
                     x--
                     if (collides()) x++
@@ -106,18 +113,29 @@ class Day17(
     }
 
     override fun solvePart1(): Int {
-        val chamber = Chamber(
-            width = 7,
-            jetStream = jetSequence(),
-        )
+        val chamber = Chamber(jetPattern)
 
         rockSequence().take(2022).forEach(chamber::placeRock)
 
         return chamber.getHeight().toInt()
     }
 
-    override fun solvePart2(): Int {
-        return 0
+    override fun solvePart2(): Long {
+        return 0L
+//        val chamber = Chamber(
+//            width = 7,
+//            jetStream = jetSequence(),
+//        )
+//
+//        val rocks = rockSequence().iterator()
+//        for (i in 0 until 1000000000000) {
+//            if (i % 100000 == 0L) {
+//                println(i)
+//            }
+//            chamber.placeRock(rocks.next())
+//        }
+//
+//        return chamber.getHeight()
     }
 }
 
